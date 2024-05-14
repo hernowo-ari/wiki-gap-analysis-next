@@ -17,7 +17,7 @@ interface overlayLeftTableProps {
       const fetchData = async () => {
         try {
           const queryParam = searchParams.get('nama_kategori') || '';
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/artikel/?nama_kategori=${encodeURIComponent(queryParam)}`);
+          const response = await axios.get(`https://hernowo12345.pythonanywhere.com/artikel/?nama_kategori=${encodeURIComponent(queryParam)}`);
           const sortedData = response.data.data.sort((a: any, b: any) => a.attributes.word_count - b.attributes.word_count);
           const reversedData = sortedData.slice().reverse();
           const judulArtikel = reversedData[0]?.attributes.nama_kategori || '';
