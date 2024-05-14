@@ -11,7 +11,7 @@ const DescStatisticsBox: React.FC = () => {
       const fetchData = async () => {
         try {
           const queryParam = searchParams.get('nama_kategori') || '';
-          const response = await axios.get(`http://hernowo12345.pythonanywhere.com/hasil_kategori/?nama_kategori=${encodeURIComponent(queryParam)}`);
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/hasil_kategori/?nama_kategori=${encodeURIComponent(queryParam)}`);
           const data = response.data.data; 
           const extractedData = data.map((item: any) => item.attributes);
           setKategoriData(extractedData);
