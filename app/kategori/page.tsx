@@ -6,11 +6,9 @@ import NilaiGiniBoxComponent from "./nilaiGiniBoxComponent";
 import LeftOverlayBox from "./leftTableOverlayComponent";
 import DescStatisticsBox from "./descStatComponent";
 import { useState, Suspense } from "react";
+import FetchedDateComponent from "./fetchedDateComponent";
 
 export default function Page() {
-  // const searchParams = useSearchParams();
-  // const queryParam = searchParams.get('datetime') || '';
-
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
   const openOverlay = () => {
@@ -77,11 +75,9 @@ export default function Page() {
               </div>
             </div>
           </div>
-          <div className="self-end mt-4 text-2xl text-neutral-700 max-md:mt-10 max-md:max-w-full">
-            {/* <Suspense fallback={<div>Loading...</div>}>
-              Data diambil pada {queryParam} GMT+7
-            </Suspense> */}
-          </div>
+          <Suspense fallback={<div>Loading...</div>}>
+            <FetchedDateComponent />
+          </Suspense>
         </div>
       </div>
     </main>
