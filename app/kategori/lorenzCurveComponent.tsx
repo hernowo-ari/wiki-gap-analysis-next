@@ -121,7 +121,7 @@ const LorenzCurve: React.FC<LorenzCurveProps> = ({ data, ylabel }) => {
         .attr('transform', 'rotate(-90)')
         .style('text-anchor', 'middle')
         .style('font-size', '24px')
-        .text(ylabel === 'word_count' ? 'Cumulative Proportion of Words' : 'Cumulative Proportion of Blue-links');
+        .text(ylabel);
 
       svg.selectAll('.tick text')
         .style('font-size', '20px');
