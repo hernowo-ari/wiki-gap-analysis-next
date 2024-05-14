@@ -38,6 +38,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
         setLoading(true);
         try {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/kategori/?nama_kategori=${encodeURIComponent(searchQuery)}&language=${encodeURIComponent(language)}`);
+            console.log(process.env.NEXT_PUBLIC_API_URL)
             const data = response.data;
             const firstItem = data.data[0];
             const attributes = firstItem.attributes;
