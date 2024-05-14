@@ -6,7 +6,7 @@ import NilaiGiniBoxComponent from "./nilaiGiniBoxComponent";
 import LeftOverlayBox from "./leftTableOverlayComponent";
 import DescStatisticsBox from "./descStatComponent";
 import { useSearchParams } from 'next/navigation';
-import { useState } from "react";
+import { useState, Suspense } from "react";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -30,7 +30,9 @@ export default function Page() {
       {isOverlayOpen && <LeftOverlayBox onClose={closeOverlay} />}
       <div className="flex justify-center items-center px-16 bg-orange-50 max-md:px-5">
         <div className="flex flex-col mt-4 max-w-full w-[1299px]">
+          <Suspense>
           <SearchBox />
+          </Suspense>
           <div className="mt-8 max-md:max-w-full">
             <div className="flex gap-5 max-md:flex-col max-md:gap-0">
               <LeftTable onOpenOverlay={openOverlay} />
