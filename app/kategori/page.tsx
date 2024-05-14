@@ -5,12 +5,11 @@ import LorenzCurveSVG from "./lorenzCurveComponent";
 import NilaiGiniBoxComponent from "./nilaiGiniBoxComponent";
 import LeftOverlayBox from "./leftTableOverlayComponent";
 import DescStatisticsBox from "./descStatComponent";
-import { useSearchParams } from 'next/navigation';
 import { useState, Suspense } from "react";
 
 export default function Page() {
-  const searchParams = useSearchParams();
-  const queryParam = searchParams.get('datetime') || '';
+  // const searchParams = useSearchParams();
+  // const queryParam = searchParams.get('datetime') || '';
 
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
@@ -24,7 +23,7 @@ export default function Page() {
 
   return (
     <main>
-      {/* <div className="flex justify-center mt-2">
+      <div className="flex justify-center mt-2">
         <h1 className="text-3xl font-bold">WikiGapAnalysis</h1>
       </div>
 
@@ -79,12 +78,12 @@ export default function Page() {
             </div>
           </div>
           <div className="self-end mt-4 text-2xl text-neutral-700 max-md:mt-10 max-md:max-w-full">
-            <Suspense fallback={<div>Loading...</div>}>
+            {/* <Suspense fallback={<div>Loading...</div>}>
               Data diambil pada {queryParam} GMT+7
-            </Suspense>
+            </Suspense> */}
           </div>
         </div>
-      </div> */}
+      </div>
     </main>
   );
 };
