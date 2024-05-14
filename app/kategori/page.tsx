@@ -25,41 +25,53 @@ export default function Page() {
   return (
     <main>
       <div className="flex justify-center mt-2">
-          <h1 className="text-3xl font-bold">WikiGapAnalysis</h1>
+        <h1 className="text-3xl font-bold">WikiGapAnalysis</h1>
       </div>
-      <Suspense>
-      {isOverlayOpen && <LeftOverlayBox onClose={closeOverlay} />}
+
+      <Suspense fallback={<div>Loading...</div>}>
+        {isOverlayOpen && <LeftOverlayBox onClose={closeOverlay} />}
       </Suspense>
+
       <div className="flex justify-center items-center px-16 bg-orange-50 max-md:px-5">
         <div className="flex flex-col mt-4 max-w-full w-[1299px]">
-          <Suspense>
-          <SearchBox />
+
+          <Suspense fallback={<div>Loading...</div>}>
+            <SearchBox />
           </Suspense>
+
           <div className="mt-8 max-md:max-w-full">
             <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-              <Suspense>
-              <LeftTable onOpenOverlay={openOverlay} />
+
+              <Suspense fallback={<div>Loading...</div>}>
+                <LeftTable onOpenOverlay={openOverlay} />
               </Suspense>
+
               <div className="flex flex-col ml-5 w-[68%] max-md:ml-0 max-md:w-full">
                 <div className="flex flex-col grow max-md:mt-10 max-md:max-w-full">
                   <div className="px-px max-md:max-w-full">
                     <div className="flex gap-10 max-md:flex-col max-md:gap-0">
-                      <Suspense>
-                      <NilaiGiniBoxComponent />
+
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <NilaiGiniBoxComponent />
                       </Suspense>
-                      <Suspense>
-                      <LorenzCurveSVG attr="word_count"/>
+
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <LorenzCurveSVG attr="word_count" />
                       </Suspense>
+
                     </div>
                   </div>
                   <div className="px-px mt-12 max-md:mt-10 max-md:max-w-full">
                     <div className="flex gap-10 max-md:flex-col max-md:gap-0">
-                      <Suspense>
-                      <DescStatisticsBox />
+
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <DescStatisticsBox />
                       </Suspense>
-                      <Suspense>
-                      <LorenzCurveSVG attr="bluelinks_count"/>
+
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <LorenzCurveSVG attr="bluelinks_count" />
                       </Suspense>
+
                     </div>
                   </div>
                 </div>
@@ -67,8 +79,8 @@ export default function Page() {
             </div>
           </div>
           <div className="self-end mt-4 text-2xl text-neutral-700 max-md:mt-10 max-md:max-w-full">
-            <Suspense>
-            Data diambil pada {queryParam} GMT+7
+            <Suspense fallback={<div>Loading...</div>}>
+              Data diambil pada {queryParam} GMT+7
             </Suspense>
           </div>
         </div>

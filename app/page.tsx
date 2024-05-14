@@ -11,8 +11,8 @@ export default function Home() {
           <h1 className="text-2xl font-bold">Analisis Kesenjagan Wikipedia</h1>
           <div className="flex justify-center items-center px-16 py-10 bg-orange-50 max-md:px-5">
             <div className="flex flex-col max-w-full w-[1299px]">
-              <Suspense>
-              <SearchBox />
+              <Suspense fallback={<div>Loading...</div>}>
+                <SearchBox />
               </Suspense>
             </div>
           </div>
