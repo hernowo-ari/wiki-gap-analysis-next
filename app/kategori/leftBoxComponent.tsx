@@ -31,7 +31,7 @@ const LeftTable: React.FC<{ onOpenOverlay: () => void }> = ({ onOpenOverlay }) =
         </div>
         {kategoriData.slice(0, 5).map((item: any, index: number) => (
           <div key={index}>
-            <div className="font-bold mt-4 text-1xl max-md:mt-4">{item.attributes.judul}</div>
+            <div className="font-bold mt-6 text-1xl max-md:mt-4">{item.attributes.judul}</div>
             <div className="flex gap-14 mt-1.5">
               <div>Jumlah Kata</div>
               <div className="flex-auto">{item.attributes.word_count}</div>

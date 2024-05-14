@@ -54,6 +54,12 @@ interface overlayLeftTableProps {
     return (
       <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
       <div className="relative flex flex-col pt-5 pr-5 pb-20 pl-10 bg-amber-100 rounded-xl max-md:pl-5">
+        <button 
+          onClick={onClose} 
+          className="absolute top-5 right-5 px-3 py-2 bg-white rounded-md text-black font-bold hover:bg-red-500 hover:text-white"
+        >
+          X
+        </button>
         <div className="flex gap-5 items-start text-4xl font-semibold text-black max-md:flex-wrap max-md:max-w-full">
           <div className="flex-auto self-end mt-11 max-md:mt-10 max-md:max-w-full">
             Tabel Kekayaan Informasi pada Kategori <br />
@@ -96,7 +102,6 @@ interface overlayLeftTableProps {
             </table>
           </div>
         </div>
-        <button onClick={onClose} className="absolute top-5 right-5 px-3 py-2 bg-white rounded-md">Close</button>
       </div>
     </div>
     );
