@@ -37,7 +37,9 @@ export default function Page() {
           </Suspense>
           <div className="mt-8 max-md:max-w-full">
             <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+              <Suspense>
               <LeftTable onOpenOverlay={openOverlay} />
+              </Suspense>
               <div className="flex flex-col ml-5 w-[68%] max-md:ml-0 max-md:w-full">
                 <div className="flex flex-col grow max-md:mt-10 max-md:max-w-full">
                   <div className="px-px max-md:max-w-full">
