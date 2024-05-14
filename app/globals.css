@@ -18,16 +18,34 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #FFF9EF;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 75vh; 
+  color: black; 
+  margin: 0 auto; 
+}
+
+
+h1 {
+  font-size: 72px;
+  color: black; 
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.search-container {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+
 }
