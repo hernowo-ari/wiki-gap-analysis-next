@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
@@ -14,6 +14,9 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
     const [language, setLanguage] = useState<string>(defaultLanguage);
     const router = useRouter();
     const [dots, setDots] = useState<number>(1);
+    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+    const searchBoxRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,11 +37,25 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+          if (searchBoxRef.current && !searchBoxRef.current.contains(event.target as Node)) {
+            setSuggestions([]);
+          }
+        };
+    
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, []);
+
     const fetchDataAndRedirect = async () => {
         setLoading(true);
         try {
             const response = await axios.get(`https://hernowo12345.pythonanywhere.com/kategori/?nama_kategori=${encodeURIComponent(searchQuery)}&language=${encodeURIComponent(language)}`);
             const data = response.data;
+            console.log(data)
             const firstItem = data.data[0];
             const attributes = firstItem.attributes;
             const namaKategori = attributes.nama_kategori;
@@ -65,9 +82,50 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
         }
     };
 
-    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(event.target.value);
-    };
+    const fetchSuggestions = async (query: string) => {
+        try {
+          const response = await axios.get(`https://${language}.wikipedia.org/w/api.php`, {
+            params: {
+              action: 'query',
+              list: 'search',
+              srsearch: query,
+              srnamespace: 14,
+              srlimit: 5,
+              format: 'json',
+              origin: '*', // To bypass CORS issues
+            },
+          });
+          const transformedSuggestions = response.data.query.search.map((item: any) => {
+            return {
+              ...item,
+              title: item.title.slice(9),
+            };
+          });
+          setSuggestions(transformedSuggestions);
+        } catch (error) {
+          console.error('Error fetching suggestions:', error);
+        } 
+      };
+
+      const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        if (debounceTimeout) {
+          clearTimeout(debounceTimeout);
+        }
+        setDebounceTimeout(setTimeout(() => {
+          if (query.length > 2) {
+            fetchSuggestions(query);
+          } else {
+            setSuggestions([]);
+          }
+        }, 1000)); // 1-second debounce
+      };
+
+      const handleSuggestionClick = (suggestion: any) => {
+        setSearchQuery(suggestion.title);
+        setSuggestions([]);
+      };
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
@@ -91,28 +149,63 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
         return loadingText;
     };
 
-    return (
-        <div className="flex-auto my-auto text-2xl text-neutral-700 max-md:max-w-full relative">
-            <div className="w-full px-25 text-base">
-                <input
-                    type="text"
-                    placeholder={`${defaultQuery === '' ? 'Cari Kategori' : defaultQuery}`} // Placeholder based on default query
-                    value={searchQuery}
-                    onChange={handleSearchInputChange}
-                    onKeyPress={handleKeyPress}
-                    className="pl-24 pr-8 py-2 border border-black rounded-md w-full"
-                />
-                <button onClick={() => handleLanguageClick('en')} className={`absolute left-2 top-1.5 px-2 py-1 border border-black rounded-md text-sm hover:bg-${language === 'en' ? 'orange' : 'white'}-300 ${language === 'en' ? 'bg-orange-300' : ''}`}>EN</button>
-                <button onClick={() => handleLanguageClick('id')} className={`absolute left-12 top-1.5 px-2 py-1 border border-black rounded-md text-sm hover:bg-${language === 'id' ? 'orange' : 'white'}-300 ${language === 'id' ? 'bg-orange-300' : ''}`}>ID</button>
-                <button onClick={handleButtonClick} className="absolute right-2 top-1.5 px-2 py-1 border border-black rounded-md text-sm hover:bg-blue-500 hover:text-white">Search</button>
+    const handleInputFocus = () => {
+        if (searchBoxRef.current) {
+          searchBoxRef.current.scrollLeft = searchBoxRef.current.scrollWidth || 0;
+        }
+      };
+    
+      return (
+        <div className="flex-auto my-auto text-2xl text-neutral-700 max-md:max-w-full relative" ref={searchBoxRef}>
+          <div className="w-full px-4 text-base overflow-x-auto">
+            <input
+              type="text"
+              placeholder={defaultQuery === '' ? 'Cari Kategori' : defaultQuery}
+              value={searchQuery}
+              onChange={handleSearchInputChange}
+              onKeyPress={handleKeyPress}
+              onFocus={handleInputFocus}
+              className="pl-24 pr-8 py-2 border border-black rounded-md w-full"
+            />
+            <button
+              onClick={() => handleLanguageClick('en')}
+              className={`absolute left-6 top-1.5 px-2 py-1 border border-black rounded-md text-sm hover:bg-${language === 'en' ? 'orange' : 'white'}-300 ${language === 'en' ? 'bg-orange-300' : ''}`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => handleLanguageClick('id')}
+              className={`absolute left-16 top-1.5 px-2 py-1 border border-black rounded-md text-sm hover:bg-${language === 'id' ? 'orange' : 'white'}-300 ${language === 'id' ? 'bg-orange-300' : ''}`}
+            >
+              ID
+            </button>
+            <button
+              onClick={handleButtonClick}
+              className="absolute right-6 top-1.5 px-2 py-1 border border-black rounded-md text-sm hover:bg-blue-500 hover:text-white"
+            >
+              Search
+            </button>
+          </div>
+          {loading && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl font-bold text-center">
+              {renderLoadingText()}
             </div>
-            {loading && (
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl font-bold text-center">
-                    {renderLoadingText()}
+          )}
+          {suggestions.length > 0 && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              {suggestions.map((suggestion) => (
+                <div
+                  key={suggestion.pageid}
+                  className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion.title}
                 </div>
-            )}
+              ))}
+            </div>
+          )}
         </div>
-    );
+      );
 };
 
 export default SearchBox;
