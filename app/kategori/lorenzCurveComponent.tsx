@@ -16,7 +16,7 @@ const LorenzCurveSVG: React.FC<LorenzCurveSVGProps> = ({ attr }) => {
     const fetchData = async () => {
       try {
         const queryParam = searchParams.get('nama_kategori') || '';
-        const response = await axios.get(`https://hernowo12345.pythonanywhere.com/artikel/?nama_kategori=${encodeURIComponent(queryParam)}`);
+        const response = await axios.get(`https://hernowo12345.pythonanywhere.com/artikel/?kategori=${encodeURIComponent(queryParam)}`);
         const responseData = response.data.data;
         const attrData = responseData.map((item: any) => item.attributes[attr])
         setKategoriData(attrData);
