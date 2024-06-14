@@ -10,8 +10,9 @@ const NilaiGiniBoxComponent: React.FC = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const queryParam = searchParams.get('nama_kategori') || '';
-          const response = await axios.get(`https://hernowo12345.pythonanywhere.com/hasil_kategori/?kategori=${encodeURIComponent(queryParam)}`);
+          const queryParam = searchParams.get('kategori') || '';
+          const subcategories = searchParams.get('subcategories') || '';
+          const response = await axios.get(`http://localhost:8000/hasil_kategori/?kategori=${encodeURIComponent(queryParam)}&subcategories${subcategories}`);
           const data = response.data.data; 
           const extractedData = data.map((item: any) => item.attributes);
           setKategoriData(extractedData);

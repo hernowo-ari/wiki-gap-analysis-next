@@ -1,69 +1,64 @@
-import React from 'react'
-import axios from 'axios';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import React from 'react';
 
-const DescStatisticsBox: React.FC = () => {
-    const searchParams = useSearchParams();
-    const [kategoriData, setKategoriData] = useState<any[]>([]);
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const queryParam = searchParams.get('nama_kategori') || '';
-          const response = await axios.get(`https://hernowo12345.pythonanywhere.com/hasil_kategori/?kategori=${encodeURIComponent(queryParam)}`);
-          const data = response.data.data; 
-          const extractedData = data.map((item: any) => item.attributes);
-          setKategoriData(extractedData);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchData();
-    }, [searchParams]);
-  
-    return (
-        <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
-        <div className="flex flex-col px-10 py-11 mx-auto w-full bg-white rounded-xl border border-solid shadow-sm border-neutral-700 text-neutral-700 max-md:px-5 max-md:mt-10">
-          <div className="font-bold mx-4 text-3xl max-md:mx-2.5">
-            Statistik Deskriptif
+interface DescStatProps {
+  data: any; // Use any type for data prop
+}
+
+const DescStatisticsBox: React.FC<DescStatProps> = ({ data }) => {
+
+  const formatNumber = (num: number | undefined, decimalPlaces: number = 2) => {
+    if (num === undefined) {
+      return ''; // Return an empty string if the number is undefined
+    }
+    return num.toFixed(decimalPlaces);
+  };
+
+  // Render the component using the attributes
+  return (
+    <div className="flex flex-col w-20/20 max-md:ml-0">
+    <div className="flex flex-col px-9 py-7 bg-white rounded-xl border border-solid shadow-sm border-neutral-700 text-neutral-700 max-md:px-4">
+      <div className="font-bold mx-4 text-3xl max-md:mx-2.5 text-center">Statistik Deskriptif</div>
+      <div className="mt-3 text-base max-md:mt-6">
+        <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Mean Kata</div>
+            <div className="text-right">{formatNumber(data.words_mean)}</div>
           </div>
-          {kategoriData.map((item, index) => (
-            <div key={index} className="flex gap-5 justify-between mt-11 text-1xl max-md:mt-10">
-              <div className="flex flex-col">
-                <div>Mean Kata</div>
-                <div className="mt-3 max-md:mt-10">
-                  Mean Blue-links
-                </div>
-                <div className="mt-3 max-md:mt-10">
-                    Median Kata
-                </div>
-                <div className="mt-3 max-md:mt-10">
-                Median Blue-links
-                </div>
-                <div className="mt-3 max-md:mt-10">
-                  Deviasi Kata
-                </div>
-                <div className="mt-3 max-md:mt-10">
-                Deviasi Blue-links
-                </div>
-                
-              </div>
-              <div className="flex flex-col self-start whitespace-nowrap">
-              <div>{String(item.words_mean).slice(0, 6)}</div>
-              <div className="mt-3 max-md:mt-10">{String(item.bluelinks_mean).slice(0, 6)}</div>
-              <div className="mt-3 max-md:mt-10">{String(item.words_median).slice(0, 6)}</div>
-              <div className="mt-3 max-md:mt-10">{String(item.bluelinks_median).slice(0, 6)}</div>
-              <div className="mt-3 max-md:mt-10">{String(item.words_std).slice(0, 6)}</div>
-              <div className="mt-3 max-md:mt-10">{String(item.bluelinks_std).slice(0, 6)}</div>
-              </div>
-            </div>
-          ))}
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Mean Blue-links</div>
+            <div className="text-right">{formatNumber(data.bluelinks_mean)}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Mean Karakter</div>
+            <div className="text-right">{formatNumber(data.char_mean)}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Median Kata</div>
+            <div className="text-right">{formatNumber(data.words_median)}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Median Blue-links</div>
+            <div className="text-right">{formatNumber(data.bluelinks_median)}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Median Karakter</div>
+            <div className="text-right">{formatNumber(data.char_median)}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Deviasi Kata</div>
+            <div className="text-right">{formatNumber(data.words_std)}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Deviasi Blue-links</div>
+            <div className="text-right">{formatNumber(data.bluelinks_std)}</div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="text-left">Deviasi Karakter</div>
+            <div className="text-right">{formatNumber(data.char_std)}</div>
+          </div>
         </div>
       </div>
-    );
-  }
-  
-  export default DescStatisticsBox;
+    </div>
+  );
+};
 
+export default DescStatisticsBox;

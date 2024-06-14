@@ -1,49 +1,49 @@
-import axios from 'axios';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const LeftTable: React.FC<{ onOpenOverlay: () => void }> = ({ onOpenOverlay }) => {
-  const searchParams = useSearchParams();
-  const [kategoriData, setKategoriData] = useState([]);
+interface LeftTableProps {
+  data: any[]; // Define the type of kategoriData
+  onOpenOverlay: () => void;
+}
 
+const LeftTable: React.FC<LeftTableProps> = ({ data, onOpenOverlay }) => {
+  // Provide an initial type for kategoriData
+  const [kategoriData, setKategoriData] = useState<any[]>([]);
+
+  // Move the logic to useEffect to avoid direct state updates
   useEffect(() => {
-    // Fetch data based on query parameter
-    const fetchData = async () => {
-      try {
-        const queryParam = searchParams.get('nama_kategori') || '';
-        const response = await axios.get(`https://hernowo12345.pythonanywhere.com/artikel/?kategori=${encodeURIComponent(queryParam)}`);
-        const sortedData = response.data.data.sort((a: any, b: any) => a.attributes.word_count - b.attributes.word_count);
-        const reversedData = sortedData.slice().reverse();
-        setKategoriData(reversedData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, [searchParams]);
+    // Ensure data is not empty before proceeding
+    if (data.length > 0) {
+      // Reverse the data and update the state
+      const reversedData = data.slice().reverse();
+      setKategoriData(reversedData);
+    }
+  }, [data]);
 
   return (
-    <div className="flex flex-col w-[32%] max-md:ml-0 max-md:w-full">
-      <div className="flex flex-col grow px-9 pt-12 pb-12 mx-auto w-full text-base bg-white rounded-xl border border-solid border-neutral-700 text-neutral-700 max-md:px-5 max-md:mt-10">
-        <div className="text-3xl font-bold">
-          Informasi Kekayaan Artikel
+    <div className="flex flex-col w-[100%] max-md:ml-0 max-md:w-full">
+      <div className="flex flex-col grow pl-10 pr-10 pt-6 pb-4 w-full text-sm bg-white rounded-xl border border-solid border-neutral-700 text-neutral-700 max-md:px-4 max-md:mt-6">
+        <div className="mb-4 text-3xl font-bold text-center">
+          Kekayaan Artikel
         </div>
-        {kategoriData.slice(0, 5).map((item: any, index: number) => (
-          <div key={index}>
-            <div className="font-bold mt-6 text-1xl max-md:mt-4">{item.attributes.judul}</div>
-            <div className="flex gap-14 mt-1.5">
+        {kategoriData.slice(0, 6).map((item: any, index: number) => (
+          <div className="m-1" key={index}>
+            <div className="font-bold mt-3 text-base max-md:mt-2 break-words max-w-xs">{item.attributes.judul}</div>
+            <div className="grid grid-cols-2 gap-4 mt-1">
               <div>Jumlah Kata</div>
-              <div className="flex-auto">{item.attributes.word_count}</div>
+              <div>{item.attributes.word_count}</div>
             </div>
-            <div className="flex gap-4 mt-2">
+            <div className="grid grid-cols-2 gap-4 mt-1">
               <div>Jumlah Blue-links</div>
-              <div className="flex-auto">{item.attributes.bluelinks_count}</div>
+              <div>{item.attributes.bluelinks_count}</div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-1">
+              <div>Jumlah Karakter</div>
+              <div>{item.attributes.char_count}</div>
             </div>
           </div>
         ))}
-        <button onClick={onOpenOverlay} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Show More
+        <button onClick={onOpenOverlay} className="my-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+          Tampilkan Lebih
         </button>
       </div>
     </div>
@@ -51,4 +51,5 @@ const LeftTable: React.FC<{ onOpenOverlay: () => void }> = ({ onOpenOverlay }) =
 };
 
 export default LeftTable;
+
 

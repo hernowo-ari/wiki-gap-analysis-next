@@ -22,11 +22,11 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
   const [flexDirection, setFlexDirection] = useState<'row' | 'column'>('row');
   const router = useRouter();
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setFlexDirection(window.innerWidth > 640 ? 'row' : 'column');
-      console.log(window.innerWidth);
-
       const handleResize = () => {
         setFlexDirection(window.innerWidth > 640 ? 'row' : 'column');
       };
@@ -71,48 +71,57 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
     };
   }, []);
 
-  const fetchArticle = async (title: string, namaKategori: string, language: string, index: number): Promise<any> => {
-    const url = `https://hernowo12345.pythonanywhere.com/artikel/get/?kategori=${encodeURIComponent(namaKategori)}&language=${encodeURIComponent(language)}&title=${encodeURIComponent(title)}`;
-    const articleResponse = await axios.get(url);
+  const fetchArticle = async (title: string, namaKategori: string, language: string, subcategories: Boolean,  index: number): Promise<any> => {
+    const response = await axios.get(`${apiUrl}/artikel/get/`, {
+      params: {
+        kategori: encodeURIComponent(namaKategori),
+        language: encodeURIComponent(language),
+        title: encodeURIComponent(title),
+        subcategories: subcategories,
+      },
+    });
     setCurrentTitleIndex(index + 1); // Update the current title index
-    return articleResponse.data;
+    return response.data;
   };
+
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const fetchDataAndRedirect = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://hernowo12345.pythonanywhere.com/kategori/`, {
+      const response = await axios.get(`${apiUrl}/kategori/`, {
         params: {
           kategori: encodeURIComponent(searchQuery),
           language: encodeURIComponent(language),
-          subcategories_flag: includeSubcategories,
+          subcategories: includeSubcategories,
         },
       });
       const data = response.data;
-
-      const firstCategory = data.data.categories[0];
+      
+      const firstCategory = data.data.categories;
       const pageTitles: string[] = data.data.page_titles;
-      const titlesCount = pageTitles.length;
+      const pageTitlesSub: string[] = data.data.page_titles_sub;
+      const titlesCount = pageTitles.length + pageTitlesSub.length;
+      const namaKategori = firstCategory.nama_kategori;
 
       setTitlesCount(titlesCount);
+      
+      const articles = [];
+      for (let i = 0; i < pageTitles.length; i++) {
+        const article = await fetchArticle(pageTitles[i], namaKategori, language, false, i);
+        articles.push(article);
+        await delay(100); // Adding a 0.1-second delay between requests
+      }
 
-      const namaKategori = firstCategory.nama_kategori;
-      const datetimeString = firstCategory.created_at;
-      const date = new Date(datetimeString);
+      for (let i = 0; i < pageTitlesSub.length; i++) {
+        const article = await fetchArticle(pageTitlesSub[i], namaKategori, language, true, pageTitles.length + i);
+        articles.push(article);
+        await delay(100); // Adding a 0.1-second delay between requests
+      }
 
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
+      await axios.get(`${apiUrl}/hasil_kategori/?kategori=${encodeURIComponent(namaKategori)}&subcategories=${includeSubcategories}`);
 
-      const formattedDatetime = `${year}-${month}-${day} ${hours}:${minutes}`;
-
-      const articlePromises = pageTitles.map((title, index) => fetchArticle(title, namaKategori, language, index));
-
-      const articles = await Promise.all(articlePromises);
-
-      router.push(`/kategori/?nama_kategori=${encodeURIComponent(namaKategori)}&language=${language}&datetime=${formattedDatetime}`);
+      router.push(`/kategori/?kategori=${encodeURIComponent(namaKategori)}&language=${language}&subcategories=${includeSubcategories}`);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -121,7 +130,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
       setTitlesCount(0);
     }
   };
-
   const fetchSuggestions = async (query: string) => {
     try {
       const response = await axios.get(`https://${language}.wikipedia.org/w/api.php`, {
@@ -159,7 +167,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
       } else {
         setSuggestions([]);
       }
-    }, 500)); // 1-second debounce
+    }, 500));
   };
 
   const handleSuggestionClick = (suggestion: any) => {
@@ -213,7 +221,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
             onChange={handleSearchInputChange}
             onKeyPress={handleKeyPress}
             onFocus={handleInputFocus}
-            className="pl-24 pr-8 py-2 border border-black rounded-md w-full"
+            className="pl-24 pr-20 py-2 border border-black rounded-md w-full"
           />
           <div style={{ display: 'flex'}}>
             <button
@@ -236,7 +244,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
             </button>
           </div>
         </div>
-        <label className="px-2 py-2 border border-black rounded-md text-sm" style={{ alignSelf: 'flex-start', minWidth: '200px', minHeight:'40px' }}>
+        <label className="px-2 py-2 border border-black rounded-md text-sm" style={{ alignSelf: 'flex-start', minWidth: '185px', minHeight:'42px' }}>
         <input
           type="checkbox"
           checked={includeSubcategories}
@@ -266,7 +274,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
       )}
     </div>
   );
-  
 };
 
 export default SearchBox;
