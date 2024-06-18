@@ -11,8 +11,7 @@ import LeftOverlayBox from "./leftTableOverlayComponent";
 import DescStatisticsBox from "./descStatComponent";
 import FetchedDateComponent from "./fetchedDateComponent";
 
-export default function Page() {
-  const searchParams = useSearchParams();
+function KategoriContent({ searchParams }: { searchParams: URLSearchParams }) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [wordCountData, setWordCountData] = useState<number[]>([]);
   const [bluelinksCountData, setBluelinksCountData] = useState<number[]>([]);
@@ -87,18 +86,6 @@ export default function Page() {
   };
 
   return (
-    <main>
-    <div className="flex justify-center mt-2">
-      <h1 className="text-3xl font-bold">
-      <Link className="btn btn-primary" href="/">
-          WikiGapAnalysis
-      </Link></h1>
-    </div>
-
-    <Suspense fallback={<div>Loading...</div>}>
-        {isOverlayOpen && <LeftOverlayBox onClose={closeOverlay} data={kategoriData} />}
-      </Suspense>
-      
     <div className="flex justify-center items-center px-16 bg-orange-50 max-md:px-5">
       <div className="flex flex-col mt-4 max-w-[1920px] max-w-full">
         <Suspense fallback={<div>Loading...</div>}>
@@ -141,9 +128,27 @@ export default function Page() {
         </Suspense>
       </div>
     </div>
-    <Footer />
+  );
+}
+
+export default function Page() {
+  const searchParams = useSearchParams();
+
+  return (
+    <main>
+      <div className="flex justify-center mt-2">
+        <h1 className="text-3xl font-bold">
+          <Link className="btn btn-primary" href="/">
+            WikiGapAnalysis
+          </Link>
+        </h1>
+      </div>
+
+      <Suspense fallback={<div>Loading...</div>}>
+        <KategoriContent searchParams={searchParams} />
+      </Suspense>
+
+      <Footer />
     </main>
   );
-  
-
 }
