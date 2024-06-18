@@ -6,13 +6,14 @@ import { useEffect, useState } from 'react';
 const NilaiGiniBoxComponent: React.FC = () => {
     const searchParams = useSearchParams();
     const [kategoriData, setKategoriData] = useState<any[]>([]);
-  
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     useEffect(() => {
       const fetchData = async () => {
         try {
           const queryParam = searchParams.get('kategori') || '';
           const subcategories = searchParams.get('subcategories') || '';
-          const response = await axios.get(`http://localhost:8000/hasil_kategori/?kategori=${encodeURIComponent(queryParam)}&subcategories${subcategories}`);
+          const response = await axios.get(`${apiUrl}/hasil_kategori/?kategori=${encodeURIComponent(queryParam)}&subcategories${subcategories}`);
           const data = response.data.data; 
           const extractedData = data.map((item: any) => item.attributes);
           setKategoriData(extractedData);
