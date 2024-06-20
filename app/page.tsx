@@ -10,8 +10,8 @@ export default function Home() {
     { language: 'id', nama_kategori: 'Industri musik', subcategories: false },
     { language: 'id', nama_kategori: 'Permainan video', subcategories: false },
     { language: 'id', nama_kategori: 'Kelas sosial', subcategories: false },
-    { language: 'id', nama_kategori: 'Tujuh keajaiban dunia', subcategories: false },
-    { language: 'id', nama_kategori: 'Dosen universitas Indonesia', subcategories: false },
+    { language: 'id', nama_kategori: 'Tujuh Keajaiban Dunia', subcategories: false },
+    { language: 'id', nama_kategori: 'Dosen Universitas Indonesia', subcategories: false },
     { language: 'id', nama_kategori: 'Pahlawan Nasional Indonesia', subcategories: false },
     { language: 'id', nama_kategori: 'Literasi', subcategories: false },
     { language: 'id', nama_kategori: 'Peradaban', subcategories: false },
@@ -20,13 +20,13 @@ export default function Home() {
     { language: 'en', nama_kategori: 'War', subcategories: false },
     { language: 'en', nama_kategori: 'Music Industry', subcategories: false },
     { language: 'en', nama_kategori: 'Video games', subcategories: false },
-    { language: 'en', nama_kategori: 'Social Class', subcategories: false },
-    { language: 'en', nama_kategori: 'Seven wonders of the world', subcategories: false },
+    { language: 'en', nama_kategori: 'Social classes', subcategories: false },
+    { language: 'en', nama_kategori: 'Seven Wonders of the Ancient World', subcategories: false },
     { language: 'en', nama_kategori: 'Academic staff of the university of Indonesia', subcategories: false },
     { language: 'en', nama_kategori: 'National heroes of Indonesia', subcategories: false },
     { language: 'en', nama_kategori: 'Literacy', subcategories: false },
     { language: 'en', nama_kategori: 'Civilizations', subcategories: false },
-    { language: 'en', nama_kategori: 'Religious Demographic', subcategories: false },
+    { language: 'en', nama_kategori: 'Religious demographics', subcategories: false },
 
     // Add more categories as needed
   ];
