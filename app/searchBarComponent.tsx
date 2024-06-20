@@ -22,8 +22,16 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
   const [flexDirection, setFlexDirection] = useState<'row' | 'column'>('row');
   const router = useRouter();
 
+  console.log('Environment API URL:', process.env.NEXT_PUBLIC_API_URL); // Check if this logs the correct URL
+
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  console.log('Constructed API URL:', `${apiUrl}/artikel/get/`);
+  if (!apiUrl) {
+    console.error('NEXT_PUBLIC_API_URL is not defined');
+  } else {
+    const fullApiUrl = apiUrl.startsWith('http') ? apiUrl : `https://${apiUrl}`;
+    console.log('Constructed API URL:', `${fullApiUrl}/artikel/get/`); // Debugging line
+  }
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setFlexDirection(window.innerWidth > 640 ? 'row' : 'column');
