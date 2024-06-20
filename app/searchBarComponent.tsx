@@ -23,7 +23,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ defaultLanguage = 'en', defaultQu
   const router = useRouter();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  
+  console.log('Constructed API URL:', `${apiUrl}/artikel/get/`);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setFlexDirection(window.innerWidth > 640 ? 'row' : 'column');
