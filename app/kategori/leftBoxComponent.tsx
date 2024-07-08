@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 
 interface LeftTableProps {
   data: any[]; // Define the type of kategoriData
+  memberCount: number;
   onOpenOverlay: () => void;
 }
 
-const LeftTable: React.FC<LeftTableProps> = ({ data, onOpenOverlay }) => {
+const LeftTable: React.FC<LeftTableProps> = ({ data, memberCount, onOpenOverlay }) => {
   // Provide an initial type for kategoriData
   const [kategoriData, setKategoriData] = useState<any[]>([]);
 
@@ -25,8 +26,11 @@ const LeftTable: React.FC<LeftTableProps> = ({ data, onOpenOverlay }) => {
         <div className="mb-4 text-3xl font-bold text-center">
           Kekayaan Artikel
         </div>
+        <div className="text-1xl font-bold text-right">
+        Total Artikel: {memberCount}
+        </div>
         {kategoriData.slice(0, 6).map((item: any, index: number) => (
-          <div className="m-1" key={index}>
+          <div className="my-1" key={index}>
             <div className="font-bold mt-3 text-base max-md:mt-2 break-words max-w-xs">{item.attributes.judul}</div>
             <div className="grid grid-cols-2 gap-4 mt-1">
               <div>Jumlah Kata</div>
@@ -42,7 +46,7 @@ const LeftTable: React.FC<LeftTableProps> = ({ data, onOpenOverlay }) => {
             </div>
           </div>
         ))}
-        <button onClick={onOpenOverlay} className="my-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+        <button onClick={onOpenOverlay} className="my-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
           Tampilkan Lebih
         </button>
       </div>

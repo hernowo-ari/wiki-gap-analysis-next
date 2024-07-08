@@ -15,12 +15,16 @@ function DashboardContent() {
   const [wordCountData, setWordCountData] = useState<number[]>([]);
   const [bluelinksCountData, setBluelinksCountData] = useState<number[]>([]);
   const [charCountData, setCharCountData] = useState<number[]>([]);
-  const [kategoriData, setKategoriData] = useState([]);
+  const [articlesData, setArticlesData] = useState([]);
 
   const [hasilData, setHasilData] = useState<number[]>([]);
   const [wordGiniData, setWordGiniData] = useState<number>(0);
   const [bluelinksGiniData, setBluelinksGiniData] = useState<number>(0);
   const [charGiniData, setCharGiniData] = useState<number>(0);
+
+  const [memberCount, setMemberCount] = useState<number>(0);
+  const [subcategories, setSubcategories] = useState<boolean>(false);
+  const [createdAt, setCreatedAt] = useState<string>('');
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   
@@ -46,7 +50,7 @@ function DashboardContent() {
         const bluelinksCountData = articlesData.map((item: any) => item.attributes.bluelinks_count);
         const charCountData = articlesData.map((item: any) => item.attributes.char_count);
 
-        setKategoriData(sortedData);
+        setArticlesData(sortedData);
         setWordCountData(wordCountData);
         setBluelinksCountData(bluelinksCountData);
         setCharCountData(charCountData);
@@ -59,7 +63,7 @@ function DashboardContent() {
           },
         });
         const hasilKategoriData = hasilResponse.data.data.attributes;
-
+        console.log(hasilKategoriData);
         const wordsGiniScore = hasilKategoriData.words_gini_score;
         const bluelinksGiniScore = hasilKategoriData.bluelinks_gini_score;
         const charGiniScore = hasilKategoriData.char_gini_score;
@@ -68,6 +72,19 @@ function DashboardContent() {
         setWordGiniData(wordsGiniScore);
         setBluelinksGiniData(bluelinksGiniScore);
         setCharGiniData(charGiniScore);
+
+        const kategoriResponse = await axios.get(`${apiUrl}/kategori/get/`, {
+          params: {
+            kategori: namaKategori,
+            language,
+            subcategories,
+          },
+        });
+        const kategoriData = kategoriResponse.data.data.attributes;
+
+        setMemberCount(kategoriData.member_count);
+        setSubcategories(kategoriData.subcategories);
+        setCreatedAt(kategoriData.created_at);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -87,7 +104,7 @@ function DashboardContent() {
   return (
     <>
       <Suspense fallback={<div>Loading...</div>}>
-        {isOverlayOpen && <LeftOverlayBox onClose={closeOverlay} data={kategoriData} />}
+        {isOverlayOpen && <LeftOverlayBox onClose={closeOverlay} data={articlesData} />}
       </Suspense>
       
       <div className="flex justify-center items-center px-16 bg-orange-50 max-md:px-5">
@@ -98,7 +115,7 @@ function DashboardContent() {
           <div className="mt-8 max-md:max-w-full">
             <div className="flex justify-center gap-8 max-md:flex-col max-md:gap-0">
               <Suspense fallback={<div>Loading...</div>}>
-                <LeftTable data={kategoriData} onOpenOverlay={openOverlay} />
+                <LeftTable data={articlesData} memberCount={memberCount} onOpenOverlay={openOverlay} />
               </Suspense>
     
               <div className="flex flex-col w-[100%] max-md:ml-0 max-md:w-full">
@@ -128,7 +145,7 @@ function DashboardContent() {
             </div>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
-            <FetchedDateComponent />
+          <FetchedDateComponent createdAt={createdAt} subcategories={subcategories} />
           </Suspense>
         </div>
       </div>
